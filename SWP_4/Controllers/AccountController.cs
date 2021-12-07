@@ -23,12 +23,8 @@ namespace SWP_4.Controllers
             {
                 return View();
             }
-             [HttpGet]
-               public IActionResult SignUp()
-             {
-             return View();
-             }
-               [HttpGet]
+             
+        [HttpGet]
             public IActionResult Login()
             {
                 return View();
@@ -50,29 +46,37 @@ namespace SWP_4.Controllers
                 }
                 return View(model);
             }
-        
-        public async Task<IActionResult> Signup(SignupModel model)
+        [HttpGet]
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Signup(SignupModel model)//registration
         {
             if (ModelState.IsValid)
             {
-                User user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
-                if (user != null)
                 {
-                    await Regstr(user); // registration
-                    return RedirectToAction("Login", "Account");// redirection to login method
+                    User user1 = new User { Email = model.Email, Password = model.Password };
+
+                    await _context.Users.AddAsync(user1);
+                    await _context.SaveChangesAsync();
+
+
+                    return RedirectToAction("Login", "Account");
                 }
-               
+              
+
+                //ModelState.AddModelError("", "fill all fields");
+                
             }
-       
-                return View(model);
+
+
+            return View(model);
         }
 
-        private Task Regstr(User user)
-        {
-            throw new NotImplementedException();
-
-        }
+        
 
         public async Task<IActionResult> Logout()
             {
