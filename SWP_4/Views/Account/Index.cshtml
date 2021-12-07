@@ -21,13 +21,16 @@ else
     <input type="text" id="message" />
     <input type="button" id="sendBtn" value="send" />
 </div>
+<br /><div id="notifyForm">
+    <input type="text" id="notify" />
+</div>
 @*@if (User.IsInRole("admin"))
-{
-    <br /><div id="notifyForm">
-        <input type="text" id="notify" />
-        <input type="button" id="notifyBtn" value="notifications" />
-    </div>
-}*@
+    {
+        <br /><div id="notifyForm">
+            <input type="text" id="notify" />
+            <input type="button" id="notifyBtn" value="notifications" />
+        </div>
+    }*@
 
 <div id="chatroom"></div>
 
@@ -55,7 +58,7 @@ else
 
     });
 
-    // username 
+    // username
     document.getElementById("loginBtn").addEventListener("click", function (e) {
         userName = document.getElementById("userName").value;
         document.getElementById("header").innerHTML = "<h3>Welcome " + userName + "</h3>";
@@ -63,8 +66,15 @@ else
     //send message
     document.getElementById("sendBtn").addEventListener("click", function (e) {
         let message = document.getElementById("message").value;
-        hubConnection.invoke("Send", message, userName);
+        let receiver = document.getElementById("notify").value;
+        let sender = document.getElementById("userName").value;
+        if (receiver != "") {
+           // hubConnection.invoke("SendMessageToGroup", receiver, sender, userName);
+            hubConnection.invoke("SendMessageToGroup", receiver, message);
+            
+        }
+        else { hubConnection.invoke("Send", message, userName);}
     });
-    
+
     hubConnection.start();
 </script>
